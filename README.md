@@ -20,3 +20,6 @@ Provision the cloud infrastructure in AWS using [Terraform](docs/terraform-readm
 
 Bring up an easily manageable infrastructure for local development with [Docker Compose](docs/compose-readme.md)
 
+# Test Automation
+
+Test Automation represented as a [.NET Reqnroll/NUnit API/UI testing framework](testautomation/SecretNick.TestAutomation/README.md)
