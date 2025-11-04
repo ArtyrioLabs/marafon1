@@ -10,7 +10,7 @@ variable "aws_region" {
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
-  default     = {t2.micro}
+  default     = "t2.micro"
 }
 
 ################################
