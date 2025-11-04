@@ -10,7 +10,7 @@ variable "aws_region" {
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
-  default     = "t2.micro"
+  default     = {}
 }
 
 ################################
@@ -121,7 +121,7 @@ variable "iam_instance_profile" {
 variable "instance_type" {
   description = "The type of instance to start"
   type        = string
-  default     = "t3.micro"
+  default     = "t2.micro"
 }
 
 variable "ec2_name_set" {
