@@ -1,5 +1,6 @@
 import CopyButton from "../copy-button/CopyButton";
 import InfoButton from "../info-button/InfoButton";
+import DeleteButton from "../delete-button/DeleteButton";
 import ItemCard from "../item-card/ItemCard";
 import { type ParticipantCardProps } from "./types";
 import "./ParticipantCard.scss";
@@ -13,6 +14,7 @@ const ParticipantCard = ({
   adminInfo = "",
   participantLink = "",
   onInfoButtonClick,
+  onDeleteButtonClick,
 }: ParticipantCardProps) => {
   return (
     <ItemCard title={`${firstName} ${lastName}`} isFocusable>
@@ -23,22 +25,30 @@ const ParticipantCard = ({
           <p className="participant-card-role">Admin</p>
         ) : null}
 
-        {isCurrentUserAdmin ? (
-          <CopyButton
-            textToCopy={participantLink}
-            iconName="link"
-            successMessage="Personal Link is copied!"
-            errorMessage="Personal Link was not copied. Try again."
-          />
-        ) : null}
+        <div className="participant-card__link">
+          {isCurrentUserAdmin ? (
+            <CopyButton
+              textToCopy={participantLink}
+              iconName="link"
+              successMessage="Personal Link is copied!"
+              errorMessage="Personal Link was not copied. Try again."
+            />
+          ) : null}
+        </div>
 
-        {isCurrentUserAdmin && !isAdmin ? (
-          <InfoButton withoutToaster onClick={onInfoButtonClick} />
-        ) : null}
+        <div className="participant-card__actions">
+          {isCurrentUserAdmin && !isAdmin ? (
+            <InfoButton withoutToaster onClick={onInfoButtonClick} />
+          ) : null}
 
-        {!isCurrentUser && isAdmin ? (
-          <InfoButton infoMessage={adminInfo} />
-        ) : null}
+          {isCurrentUserAdmin && !isCurrentUser && !isAdmin ? (
+            <DeleteButton onClick={onDeleteButtonClick} />
+          ) : null}
+
+          {!isCurrentUser && isAdmin ? (
+            <InfoButton infoMessage={adminInfo} />
+          ) : null}
+        </div>
       </div>
     </ItemCard>
   );

@@ -63,6 +63,16 @@ namespace Epam.ItMarathon.ApiService.Api.Endpoints
                 .WithSummary("Create and add user to a room.")
                 .WithDescription("Return created user info.");
 
+            _ = root.MapDelete("{id:long}", DeleteUser)
+                .AddEndpointFilterFactory(ValidationFactoryFilter.GetValidationFactory)
+                .Produces(StatusCodes.Status204NoContent)
+                .ProducesProblem(StatusCodes.Status400BadRequest)
+                .ProducesProblem(StatusCodes.Status403Forbidden)
+                .ProducesProblem(StatusCodes.Status404NotFound)
+                .ProducesProblem(StatusCodes.Status500InternalServerError)
+                .WithSummary("Delete user from room by admin.")
+                .WithDescription("Delete user by id with admin authorization.");
+
             return application;
         }
 
@@ -128,6 +138,23 @@ namespace Epam.ItMarathon.ApiService.Api.Endpoints
             return result.IsFailure
                 ? result.Error.ValidationProblem()
                 : Results.Created(string.Empty, mapper.Map<UserCreationResponse>(result.Value));
+        }
+
+        /// <summary>
+        /// Delete User logic.
+        /// </summary>
+        /// <param name="id">Unique identifier of the User to delete.</param>
+        /// <param name="userCode">Admin user authorization code.</param>
+        /// <param name="mediator">Implementation of <see cref="IMediator"/> for handling business logic.</param>
+        /// <param name="cancellationToken"><see cref="CancellationToken"/> that can be used to cancel operation.</param>
+        /// <returns>Returns <seealso cref="IResult"/> depending on operation result.</returns>
+        public static async Task<IResult> DeleteUser([FromRoute] ulong id, [FromQuery, Required] string? userCode,
+            IMediator mediator, CancellationToken cancellationToken)
+        {
+            var result = await mediator.Send(new DeleteUserCommand(id, userCode!), cancellationToken);
+            return result.IsFailure
+                ? result.Error.ValidationProblem()
+                : Results.NoContent();
         }
     }
 }

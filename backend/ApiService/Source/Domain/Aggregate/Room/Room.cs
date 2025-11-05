@@ -293,6 +293,31 @@ namespace Epam.ItMarathon.ApiService.Domain.Aggregate.Room
             return this;
         }
 
+        /// <summary>
+        /// Method to remove a User from the Room.
+        /// </summary>
+        /// <param name="userId">User identifier to be removed.</param>
+        /// <returns>Returns <see cref="Room"/> encapsulated in <see cref="Result"/>.</returns>
+        public Result<Room, ValidationResult> RemoveUser(ulong userId)
+        {
+            var roomCanBeModifiedResult = CheckRoomCanBeModified();
+            if (roomCanBeModifiedResult.IsFailure)
+            {
+                return Result.Failure<Room, ValidationResult>(roomCanBeModifiedResult.Error);
+            }
+
+            var user = Users.FirstOrDefault(u => u.Id == userId);
+            if (user is null)
+            {
+                return Result.Failure<Room, ValidationResult>(new NotFoundError([
+                    new ValidationFailure("id", "User with specified id not found.")
+                ]));
+            }
+
+            Users.Remove(user);
+            return this;
+        }
+
         private Result<bool, ValidationResult> CheckRoomCanBeModified()
         {
             if (ClosedOn is not null)

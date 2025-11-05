@@ -72,6 +72,36 @@ const RoomPage = () => {
       false,
     );
 
+  const handleDeleteUser = async (userId: number) => {
+    console.log("Attempting to delete user:", userId, "with userCode:", userCode);
+    console.log("URL:", `${BASE_API_URL}/api/users/${userId}?userCode=${userCode}`);
+    
+    try {
+      const response = await fetch(
+        `${BASE_API_URL}/api/users/${userId}?userCode=${userCode}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+
+      if (response.ok) {
+        showToast("User has been successfully removed", "success", "large");
+        fetchParticipants();
+      } else {
+        const errorText = await response.text();
+        console.error("Delete failed:", response.status, errorText);
+        showToast("Failed to delete user. Try again.", "error", "large");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      showToast("Failed to delete user. Try again.", "error", "large");
+    }
+  };
+
   const isLoading =
     isLoadingRoomDetails || isLoadingParticipants || isRandomizing;
 
@@ -87,6 +117,7 @@ const RoomPage = () => {
         participants={participants ?? []}
         roomDetails={roomDetails ?? ({} as GetRoomResponse)}
         onDrawNames={() => fetchRandomize()}
+        onDeleteUser={handleDeleteUser}
       />
     </main>
   );
