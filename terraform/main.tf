@@ -86,7 +86,7 @@ module "alb" {
   web_backend_port  = var.web_backend_port
   web_ui_port       = var.web_ui_port
   enable_https      = var.enable_https
-  certificate_arn   = var.enable_https ? module.dns_ssl[0].certificate_arn : ""
+  certificate_arn   = var.enable_https ? module.dns_ssl[0].certificate_validation_arn : ""
 }
 
 ################################################################################

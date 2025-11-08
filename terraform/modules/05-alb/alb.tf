@@ -82,6 +82,8 @@ resource "aws_lb_target_group" "web_ui_angular" {
 }
 
 resource "aws_lb_listener" "http" {
+  count = var.enable_https ? 0 : 1
+
   load_balancer_arn = aws_lb.this.arn
   port              = var.web_ui_port
   protocol          = "HTTP"
@@ -107,7 +109,9 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_listener_rule" "http_api_forward" {
-  listener_arn = aws_lb_listener.http.arn
+  count = var.enable_https ? 0 : 1
+
+  listener_arn = aws_lb_listener.http[0].arn
   priority     = 1 # Set the priority to ensure this rule is processed first
 
   condition {

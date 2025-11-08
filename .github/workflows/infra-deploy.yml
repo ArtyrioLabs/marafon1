@@ -65,6 +65,49 @@ jobs:
       - name: Terraform Init
         run: terraform init
       
+      - name: Check and unlock Terraform state (if locked)
+        run: |
+          # Проверяем наличие lock файла в S3
+          if aws s3 ls s3://artyriolabs/terraform.tfstate.lock --region eu-central-1 2>/dev/null; then
+            echo "⚠️  WARNING: Terraform state is locked!"
+            echo "⚠️  This usually means a previous terraform apply is still running or failed."
+            echo "⚠️  Removing stale lock file..."
+            echo "⚠️  If a terraform apply is currently running, this may cause issues!"
+            aws s3 rm s3://artyriolabs/terraform.tfstate.lock --region eu-central-1
+            echo "✅ Lock file removed. Proceeding..."
+          else
+            echo "✅ No state lock found"
+          fi
+        continue-on-error: true
+      
+      - name: Remove old HTTP listener from state (if exists and enable_https=true)
+        run: |
+          # Удаляем старый HTTP listener из state, если он там есть
+          # Это нужно, если listener был удален вручную, но остался в state
+          # Проверяем, что enable_https=true в terraform.tfvars
+          if grep -q "enable_https.*=.*true" terraform.tfvars 2>/dev/null; then
+            echo "🔍 enable_https=true detected, checking for old HTTP listener in state..."
+            
+            # Проверяем, есть ли listener в state
+            if terraform state list 2>/dev/null | grep -q "module.alb.aws_lb_listener.http$"; then
+              echo "⚠️  Found old HTTP listener in state, removing..."
+              terraform state rm 'module.alb.aws_lb_listener.http' && echo "✅ HTTP listener removed from state" || echo "❌ Failed to remove HTTP listener"
+            else
+              echo "ℹ️  HTTP listener not in state (already removed or never existed)"
+            fi
+            
+            # Проверяем, есть ли listener rule в state
+            if terraform state list 2>/dev/null | grep -q "module.alb.aws_lb_listener_rule.http_api_forward$"; then
+              echo "⚠️  Found old HTTP listener rule in state, removing..."
+              terraform state rm 'module.alb.aws_lb_listener_rule.http_api_forward' && echo "✅ HTTP listener rule removed from state" || echo "❌ Failed to remove HTTP listener rule"
+            else
+              echo "ℹ️  HTTP listener rule not in state (already removed or never existed)"
+            fi
+          else
+            echo "ℹ️  enable_https is not true, skipping HTTP listener removal"
+          fi
+        continue-on-error: true
+      
       - name: Terraform Action (${{ env.ACTION }})
         run: |
           case "${MODULE}" in

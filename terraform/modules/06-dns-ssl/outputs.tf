@@ -13,6 +13,11 @@ output "certificate_arn" {
   value       = aws_acm_certificate.main.arn
 }
 
+output "certificate_validation_arn" {
+  description = "ARN of the validated ACM certificate (use this for ALB listeners)"
+  value       = aws_acm_certificate_validation.main.certificate_arn
+}
+
 output "certificate_domain_name" {
   description = "Domain name for which the certificate is issued"
   value       = aws_acm_certificate.main.domain_name
