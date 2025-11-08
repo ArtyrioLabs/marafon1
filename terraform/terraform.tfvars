@@ -62,12 +62,12 @@ enable_https = true
 # - https://www.duckdns.org/ (*.duckdns.org - easiest, but no DNS validation support)
 # - https://freedns.afraid.org/ (various free domains)
 # - https://nic.eu.org/ (*.eu.org - takes 1-2 days, RECOMMENDED for Route53)
-domain_name = "secret-nick.duckdns.org"  # CHANGE THIS to your registered domain (e.g., marafon-app.eu.org)
+domain_name = "sekret-nick.pp.ua"  # Домен с nic.ua
 
 # Create Route53 hosted zone (set to false if using external DNS provider like DuckDNS)
 # For DuckDNS: set to false (DuckDNS doesn't support nameserver delegation)
-# For eu.org or other registrars: set to true to create Route53 zone
-create_route53_zone = false  # Set to true after registering eu.org domain
+# For nic.ua, eu.org or other registrars: set to true to create Route53 zone
+create_route53_zone = true  # ВАЖНО: true для nic.ua с Route53
 
 # Additional domain names for certificate (optional)
 # subject_alternative_names = ["www.marafon-app.duckdns.org"]
