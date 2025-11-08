@@ -48,24 +48,13 @@ runs:
         DOMAIN_NAME=$(grep -Po '^\s*domain_name\s*=\s*"\K[^"]+' terraform/terraform.tfvars || echo "marathon2025.pp.ua")
         echo "got: $DOMAIN_NAME"
 
-        ALB_DNS=$(aws elbv2 describe-load-balancers \
-                            --region ${{ inputs.aws-region }} \
-                            --query "LoadBalancers[0].DNSName" \
-                            --output text || echo "localhost:8080")
-        echo "got: $ALB_DNS"
-
-        TEMP_URL="https://backend.${DOMAIN_NAME}"
-        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "${TEMP_URL}/api/system/info" || true)
-
-        if [[ "$RESPONSE" == "200" ]] ; then
-          BASE_API_URL="$TEMP_URL"
-        else
-          BASE_API_URL="http://${ALB_DNS}"
-        fi
+        # Use relative URL (empty string) for production to avoid Mixed Content errors
+        # Frontend and backend are behind the same ALB, so relative URLs work perfectly
+        BASE_API_URL=""
 
         echo "BASE_API_URL=$BASE_API_URL"
         echo "BASE_API_URL=$BASE_API_URL" >> $GITHUB_ENV
-        echo "Determined BASE_API_URL: $BASE_API_URL"
+        echo "Using relative URL for API (empty string) to avoid Mixed Content errors"
 
 
     - name: Set React Environment
