@@ -45,9 +45,31 @@ subnets = {
 name_prefix       = "app"
 project_name      = "app"
 alb_ingress_cidr  = ["0.0.0.0/0"]
-alb_ingress_ports = [80, 8080]
+alb_ingress_ports = [80, 443, 8080]  # Added 443 for HTTPS
 web_backend_port  = 8080
 web_ui_port       = 80
+
+################################################################################
+# DNS and SSL/TLS configuration
+################################################################################
+
+# Enable HTTPS with SSL/TLS certificate
+# Set to true after registering a domain
+enable_https = false  # Change to true when you have a domain
+
+# Your registered domain name (e.g., yourapp.tk, yourapp.duckdns.org)
+# Uncomment and set after domain registration:
+# domain_name = "yourapp.tk"
+
+# Create Route53 hosted zone (set to false if using external DNS provider)
+create_route53_zone = true
+
+# Additional domain names for certificate (optional)
+# Uncomment to add www subdomain:
+# subject_alternative_names = ["www.yourapp.tk"]
+
+# If using existing Route53 zone, provide zone ID:
+# route53_zone_id = "Z0123456789ABCDEFGHIJ"
 
 ################################################################################
 # EC2 configuration

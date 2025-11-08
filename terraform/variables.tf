@@ -205,3 +205,37 @@ variable "db_subnet_group_name" {
   description = "The name of the subnet group where RDS instance is placed"
   type        = string
 }
+
+################################
+# DNS and SSL/TLS
+################################
+
+variable "enable_https" {
+  description = "Enable HTTPS with SSL/TLS certificate"
+  type        = bool
+  default     = false
+}
+
+variable "domain_name" {
+  description = "Domain name for SSL certificate and Route53 zone (e.g., yourapp.tk)"
+  type        = string
+  default     = ""
+}
+
+variable "create_route53_zone" {
+  description = "Whether to create Route53 hosted zone (set to false if using external DNS)"
+  type        = bool
+  default     = true
+}
+
+variable "route53_zone_id" {
+  description = "Existing Route53 zone ID (required if create_route53_zone is false)"
+  type        = string
+  default     = ""
+}
+
+variable "subject_alternative_names" {
+  description = "Additional domain names for certificate (e.g., www.yourapp.tk)"
+  type        = list(string)
+  default     = []
+}

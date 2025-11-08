@@ -33,3 +33,15 @@ variable "web_ui_port" {
   description = "Port for Web UI service"
   type        = number
 }
+
+variable "certificate_arn" {
+  description = "ARN of the ACM certificate for HTTPS listener"
+  type        = string
+  default     = ""
+}
+
+variable "enable_https" {
+  description = "Whether to enable HTTPS listener"
+  type        = bool
+  default     = false
+}

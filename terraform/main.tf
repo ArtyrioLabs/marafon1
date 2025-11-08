@@ -85,4 +85,24 @@ module "alb" {
   security_group_id = module.security_groups.alb_security_group_id
   web_backend_port  = var.web_backend_port
   web_ui_port       = var.web_ui_port
+  enable_https      = var.enable_https
+  certificate_arn   = var.enable_https ? module.dns_ssl[0].certificate_arn : ""
+}
+
+################################################################################
+# DNS and SSL/TLS Certificate
+################################################################################
+
+module "dns_ssl" {
+  count = var.enable_https ? 1 : 0
+
+  source = "./modules/06-dns-ssl"
+
+  domain_name               = var.domain_name
+  create_route53_zone       = var.create_route53_zone
+  route53_zone_id           = var.route53_zone_id
+  alb_dns_name              = module.alb.lb_dns_name
+  alb_zone_id               = module.alb.lb_zone_id
+  subject_alternative_names = var.subject_alternative_names
+  tags                      = var.tags
 }

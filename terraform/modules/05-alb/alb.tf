@@ -121,3 +121,73 @@ resource "aws_lb_listener_rule" "http_api_forward" {
     target_group_arn = aws_lb_target_group.backend.arn
   }
 }
+
+################################################################################
+# HTTPS Listener (optional, enabled when certificate_arn is provided)
+################################################################################
+
+resource "aws_lb_listener" "https" {
+  count = var.enable_https ? 1 : 0
+
+  load_balancer_arn = aws_lb.this.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = var.certificate_arn
+
+  default_action {
+    type = "forward"
+    
+    forward {
+      target_group {
+        arn    = aws_lb_target_group.web_ui_react.arn
+        weight = 50 # 50% to React
+      }
+      target_group {
+        arn    = aws_lb_target_group.web_ui_angular.arn
+        weight = 50 # 50% to Angular
+      }
+      stickiness {
+        enabled  = true
+        duration = 1800
+      }
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "https_api_forward" {
+  count = var.enable_https ? 1 : 0
+
+  listener_arn = aws_lb_listener.https[0].arn
+  priority     = 1
+
+  condition {
+    path_pattern {
+      values = ["/api/*"]
+    }
+  }
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.backend.arn
+  }
+}
+
+# HTTP to HTTPS redirect (when HTTPS is enabled)
+resource "aws_lb_listener" "http_redirect" {
+  count = var.enable_https ? 1 : 0
+
+  load_balancer_arn = aws_lb.this.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
