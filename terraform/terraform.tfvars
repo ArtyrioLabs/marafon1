@@ -55,18 +55,22 @@ web_ui_port       = 80
 
 # Enable HTTPS with SSL/TLS certificate
 # Set to true after registering a domain
-enable_https = false  # Change to true when you have a domain
+enable_https = true
 
 # Your registered domain name (e.g., yourapp.tk, yourapp.duckdns.org)
-# Uncomment and set after domain registration:
-# domain_name = "yourapp.tk"
+# IMPORTANT: Register a free domain first at:
+# - https://www.duckdns.org/ (*.duckdns.org - easiest, but no DNS validation support)
+# - https://freedns.afraid.org/ (various free domains)
+# - https://nic.eu.org/ (*.eu.org - takes 1-2 days, RECOMMENDED for Route53)
+domain_name = "secret-nick.duckdns.org"  # CHANGE THIS to your registered domain (e.g., marafon-app.eu.org)
 
-# Create Route53 hosted zone (set to false if using external DNS provider)
-create_route53_zone = true
+# Create Route53 hosted zone (set to false if using external DNS provider like DuckDNS)
+# For DuckDNS: set to false (DuckDNS doesn't support nameserver delegation)
+# For eu.org or other registrars: set to true to create Route53 zone
+create_route53_zone = false  # Set to true after registering eu.org domain
 
 # Additional domain names for certificate (optional)
-# Uncomment to add www subdomain:
-# subject_alternative_names = ["www.yourapp.tk"]
+# subject_alternative_names = ["www.marafon-app.duckdns.org"]
 
 # If using existing Route53 zone, provide zone ID:
 # route53_zone_id = "Z0123456789ABCDEFGHIJ"
