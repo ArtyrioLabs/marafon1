@@ -128,5 +128,9 @@ namespace Tests.Common.TestData
                 InfoLink = _faker.Random.Bool() ? $"https://{_faker.Internet.DomainName()}/{_faker.Lorem.Slug()}" : null
             };
         }
+
+        public static string GenerateInvalidFirstName() => new string('A', 41); // 41 chars - exceeds limit of 40
+        public static string GenerateInvalidLastName() => new string('B', 41); // 41 chars - exceeds limit of 40
+        public static string GenerateInvalidDeliveryAddress() => new string('C', 501); // 501 chars - exceeds limit of 500
     }
 }
