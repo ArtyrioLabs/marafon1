@@ -56,6 +56,12 @@ namespace Tests.Ui.Steps
             }
 
             scenarioContext.Set(participantNames, "ParticipantNames");
+            
+            // Delay to ensure room data is fully persisted and available via API
+            // This helps prevent race conditions when navigating to welcome page
+            // The welcomeGuard makes an API call to get room data, so we need to ensure
+            // the room is available in the database before navigation
+            await Task.Delay(1000);
         }
 
         [When("I add {int} participants via API")]

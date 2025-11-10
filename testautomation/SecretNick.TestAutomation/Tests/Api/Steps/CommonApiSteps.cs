@@ -14,9 +14,18 @@ namespace Tests.Api.Steps
         [Given("the API is available")]
         public async Task GivenTheAPIIsAvailable()
         {
-            var response = await _systemApiClient.GetSystemInfoAsync();
-            response.ShouldNotBeNull();
-            response.Environment.ShouldNotBeNullOrEmpty();
+            try
+            {
+                var response = await _systemApiClient.GetSystemInfoAsync();
+                response.ShouldNotBeNull();
+                response.Environment.ShouldNotBeNullOrEmpty();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException(
+                    $"API is not available. Please ensure the backend service is running at {_systemApiClient.GetType().Name}. " +
+                    $"Original error: {ex.Message}", ex);
+            }
         }
 
         [Then("the request should return status {int}")]

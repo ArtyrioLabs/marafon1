@@ -8,8 +8,26 @@ namespace Tests.Ui.Pages
     {
         public async Task<string> GetRoomNameAsync()
         {
-            var locator = Page.Locator("xpath=.//*[@class='room-details__content']//h2 | .//*[@class='room-info__title']").First;
-            return await locator.GetTextSafeAsync();
+            // Room name is in h1.room-info__title inside app-room-info component
+            var selectors = new[]
+            {
+                "xpath=.//h1[contains(@class,'room-info__title')]",
+                "xpath=.//*[@class='room-info__title']",
+                "xpath=.//h1[contains(@class,'title')][contains(@class,'room-info')]",
+                "css=h1.room-info__title"
+            };
+
+            foreach (var selector in selectors)
+            {
+                var locator = Page.Locator(selector).First;
+                if (await locator.IsVisibleSafeAsync(5000))
+                {
+                    var text = await locator.GetTextSafeAsync();
+                    if (!string.IsNullOrWhiteSpace(text))
+                        return text;
+                }
+            }
+            return string.Empty;
         }
 
         public async Task<string> GetRoomDescriptionAsync()
@@ -54,10 +72,46 @@ namespace Tests.Ui.Pages
 
         public async Task<int> GetParticipantsCountAsync()
         {
-            var counterText = await GetTextAsync("(.//span[contains(@class,'counter')])[1]");
-            var match = ValidationPatterns.Participants().Match(counterText);
+            // Participants count is in span.pl-counter in format "X / Y"
+            // We need to extract the first number (current count)
+            var selectors = new[]
+            {
+                "xpath=.//span[contains(@class,'pl-counter')]",
+                "css=span.pl-counter",
+                "xpath=.//*[@class='pl-counter']",
+                "xpath=.//span[contains(@class,'counter')]"
+            };
 
-            return match.Success ? int.Parse(match.Value) : 0;
+            string? counterText = null;
+            foreach (var selector in selectors)
+            {
+                var locator = Page.Locator(selector).First;
+                if (await locator.IsVisibleSafeAsync(5000))
+                {
+                    counterText = await locator.GetTextSafeAsync();
+                    if (!string.IsNullOrWhiteSpace(counterText))
+                        break;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(counterText))
+                return 0;
+
+            // Extract first number from format "X / Y" or just "X"
+            var match = ValidationPatterns.Participants().Match(counterText);
+            if (match.Success)
+            {
+                return int.Parse(match.Value);
+            }
+
+            // Fallback: try to parse first number manually
+            var numbers = System.Text.RegularExpressions.Regex.Matches(counterText, @"\d+");
+            if (numbers.Count > 0 && int.TryParse(numbers[0].Value, out var count))
+            {
+                return count;
+            }
+
+            return 0;
         }
 
         public async Task<bool> IsMinimumPeopleWarningVisibleAsync()

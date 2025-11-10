@@ -47,8 +47,11 @@ namespace Tests.Ui.Steps
         [Then("I should see room success with name {string}")]
         public async Task ThenIShouldSeeRoomSuccessPageWithName(string roomName)
         {
+            // Wait a bit for page to fully render after navigation
+            await page.WaitForTimeoutAsync(1000);
+            
             var isVisible = await GetRoomSuccessPage().IsSuccessTitleVisibleAsync(roomName);
-            isVisible.ShouldBeTrue($"Success title with room name '{roomName}' should be visible");
+            isVisible.ShouldBeTrue($"Success title with room name '{roomName}' should be visible (timeout: 5s)");
 
             if (scenarioContext.ContainsKey("RoomCreationResponse"))
             {
@@ -61,8 +64,11 @@ namespace Tests.Ui.Steps
         [Then("I should see room success page")]
         public async Task ThenIShouldSeeRoomSuccessPage()
         {
+            // Wait a bit for page to fully render after navigation
+            await page.WaitForTimeoutAsync(1000);
+            
             var isOnSuccessPage = await GetRoomSuccessPage().IsOnSuccessPageAsync();
-            isOnSuccessPage.ShouldBeTrue("Should be on room success page");
+            isOnSuccessPage.ShouldBeTrue("Should be on room success page (timeout: 10s)");
         }
 
         [Then("I should see room link")]

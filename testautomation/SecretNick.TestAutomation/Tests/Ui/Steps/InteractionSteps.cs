@@ -13,7 +13,7 @@ namespace Tests.Ui.Steps
         {
             await GetBasePage().ClickButtonAsync(buttonText);
 
-            if (buttonText is "Continue" or "Complete" or "Create Your Room" or "Visit Your Room")
+            if (buttonText is "Continue" or "Create Your Room" or "Visit Your Room")
             {
                 try
                 {
@@ -21,6 +21,25 @@ namespace Tests.Ui.Steps
                 }
                 catch
                 {
+                }
+            }
+            else if (buttonText == "Complete")
+            {
+                // After clicking "Complete", wait for API call and navigation to success page
+                try
+                {
+                    // Wait for network request to complete (room creation API call)
+                    await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 10000 });
+                    
+                    // Wait for navigation to success page
+                    await page.WaitForURLAsync("**/create-room/success", new() { Timeout = 15000 });
+                    
+                    // Wait for success page to load
+                    await page.WaitForLoadStateAsync(LoadState.NetworkIdle, new() { Timeout = 5000 });
+                }
+                catch
+                {
+                    // If navigation fails, continue - the verification step will catch the error
                 }
             }
         }

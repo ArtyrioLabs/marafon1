@@ -112,10 +112,27 @@ namespace Tests.Hooks
                     Directory.CreateDirectory(screenshotDir);
 
                     var arguments = _scenarioContext.ScenarioInfo.Arguments;
-                    string argumentsString = string.Join("_", arguments.Values.Cast<object>().Select(v => v?.ToString()?.Replace(" ", "_")));
+                    // Truncate long argument values to prevent Windows path length issues (max 260 chars)
+                    string argumentsString = string.Join("_", arguments.Values.Cast<object>().Select(v =>
+                    {
+                        var str = v?.ToString()?.Replace(" ", "_") ?? "";
+                        // Limit each argument to 50 characters to keep filename reasonable
+                        return str.Length > 50 ? str.Substring(0, 50) + "..." : str;
+                    }));
 
                     var rawFileName = $"{_scenarioContext.ScenarioInfo.Title}_{argumentsString}_{DateTime.Now:yyyyMMdd_HHmmss}.png";
                     var fileName = Regex.Replace(rawFileName, @"[<>:""/\\|?*]", "_");
+                    
+                    // Ensure total path length doesn't exceed Windows limit (260 chars)
+                    // Screenshot dir + filename should be < 260
+                    var maxFileNameLength = 260 - screenshotDir.Length - 10; // 10 for safety margin
+                    if (fileName.Length > maxFileNameLength)
+                    {
+                        var extension = Path.GetExtension(fileName);
+                        var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                        fileName = nameWithoutExt.Substring(0, maxFileNameLength - extension.Length) + extension;
+                    }
+                    
                     var screenshotPath = Path.Combine(screenshotDir, fileName);
 
                     await browserDriver.Page.ScreenshotAsync(new PageScreenshotOptions

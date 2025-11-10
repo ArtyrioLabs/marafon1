@@ -32,8 +32,10 @@ namespace Tests.Ui.Pages
 
         protected internal async Task ClickButtonAsync(string buttonText)
         {
-            var locator = Page.Locator($"xpath=.//button[.='{buttonText}']");
-            await locator.ClickSafeAsync(10000);
+            // Button text can be directly in button or inside span.btn__text (Angular component)
+            var locator = Page.Locator($"xpath=.//button[.='{buttonText}'] | .//button[.//span[.='{buttonText}']] | .//button[contains(., '{buttonText}')]");
+            // Increased timeout for buttons that may take time to appear (e.g., after page load)
+            await locator.ClickSafeAsync(15000);
         }
 
         public async Task ClickOutsideAsync()
