@@ -1,0 +1,12 @@
+<app-common-modal-template
+  [headerPictureName]="pictureName"
+  [headerTitle]="title"
+  [buttonText]="buttonText"
+  [subtitle]="subtitle()"
+  [cancelButtonText]="cancelButtonText"
+  (buttonAction)="onConfirmDelete()"
+  (cancelButtonAction)="onCancel()"
+  (closeModal)="onCloseModal()"
+>
+</app-common-modal-template>
+

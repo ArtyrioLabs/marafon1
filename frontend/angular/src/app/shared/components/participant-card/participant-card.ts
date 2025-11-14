@@ -21,6 +21,7 @@ import { PopupService } from '../../../core/services/popup';
 import { copyToClipboard } from '../../../utils/copy';
 import { UrlService } from '../../../core/services/url';
 import { ParticipantInfoModal } from '../../../room/components/participant-info-modal/participant-info-modal';
+import { DeleteUserConfirmationModal } from '../../../room/components/delete-user-confirmation-modal/delete-user-confirmation-modal';
 import { ModalService } from '../../../core/services/modal';
 import { getPersonalInfo } from '../../../utils/get-personal-info';
 import { UserService } from '../../../room/services/user';
@@ -58,6 +59,8 @@ export class ParticipantCard {
   public readonly ariaLabelCopy = AriaLabel.ParticipantLink;
   public readonly iconInfo = IconName.Info;
   public readonly ariaLabelInfo = AriaLabel.Info;
+  public readonly iconDelete = IconName.Delete;
+  public readonly ariaLabelDelete = AriaLabel.Delete;
 
   @HostBinding('tabindex') tab = 0;
   @HostBinding('class.list-row') rowClass = true;
@@ -165,6 +168,29 @@ export class ParticipantCard {
         type: MessageType.Info,
       },
       true
+    );
+  }
+
+  public onDeleteClick(): void {
+    const userName = this.fullName();
+    const userId = this.participant().id;
+
+    this.#modalService.openWithResult(
+      DeleteUserConfirmationModal,
+      { userName },
+      {
+        confirmDelete: () => {
+          this.#userService.deleteUser(userId).subscribe({
+            next: () => {
+              this.#modalService.close();
+            },
+            error: () => {
+              // Error is handled in UserService
+            },
+          });
+        },
+        closeModal: () => this.#modalService.close(),
+      }
     );
   }
 }
