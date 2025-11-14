@@ -4,6 +4,6 @@
   [attr.aria-label]="ariaLabel()"
   [disabled]="isButtonDisabled()">
   <svg class="button__icon">
-    <use [attr.href]="iconHref()" />
+    <use [attr.href]="iconHref()" [attr.xlink:href]="iconHref()" />
   </svg>
 </button>

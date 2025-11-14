@@ -28,16 +28,18 @@
   }
 
   @if (isCurrentUserAdmin() && !participant().isAdmin) {
-    <app-icon-button
-      [iconName]="iconInfo"
-      [ariaLabel]="ariaLabelInfo"
-      (click)="onInfoClick()"
-    />
-    
-    <app-icon-button
-      [iconName]="iconDelete"
-      [ariaLabel]="ariaLabelDelete"
-      (click)="onDeleteClick()"
-    />
+    @if (!isCurrentUser()) {
+      <app-icon-button
+        [iconName]="iconInfo"
+        [ariaLabel]="ariaLabelInfo"
+        (click)="onInfoClick()"
+      />
+      
+      <app-icon-button
+        [iconName]="iconDelete"
+        [ariaLabel]="ariaLabelDelete"
+        (click)="onDeleteClick()"
+      />
+    }
   }
 </span>
