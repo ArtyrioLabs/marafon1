@@ -171,21 +171,15 @@ export class ParticipantCard {
     );
   }
 
-  public onDeleteClick(event: Event): void {
-    event.preventDefault();
-    event.stopPropagation();
-    
+  public onDeleteClick(): void {
     const userName = this.fullName();
     const userId = this.participant().id;
 
-    // Open modal first - deletion should only happen when user confirms
     this.#modalService.openWithResult(
       DeleteUserConfirmationModal,
       { userName },
       {
         confirmDelete: () => {
-          // This handler is only called when user clicks "Видалити" button in modal
-          // after onConfirmDelete() is called, which emits confirmDelete
           this.#userService.deleteUser(userId).subscribe({
             next: () => {
               this.#modalService.close();
@@ -195,9 +189,7 @@ export class ParticipantCard {
             },
           });
         },
-        closeModal: () => {
-          this.#modalService.close();
-        },
+        closeModal: () => this.#modalService.close(),
       }
     );
   }
