@@ -21,7 +21,9 @@ namespace Epam.ItMarathon.ApiService.Api.Dto.Mapping
                     )));
 
             CreateMap<Room, RoomReadDto>().ForMember(roomDto => roomDto.AdminId,
-                opt => opt.MapFrom(room => room.Users.FirstOrDefault(user => user.IsAdmin)?.Id ?? 0UL));
+                opt => opt.MapFrom(room => room.Users.Any(user => user.IsAdmin) 
+                    ? room.Users.First(user => user.IsAdmin).Id 
+                    : 0UL));
 
             CreateMap<User, UserReadDto>()
                 .ForMember(dest => dest.UserCode, opt =>
