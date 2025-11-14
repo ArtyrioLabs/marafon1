@@ -19,7 +19,6 @@ export class DeleteUserConfirmationModal {
 
   readonly closeModal = output<void>();
   readonly confirmDelete = output<void>();
-  readonly buttonAction = output<void>();
 
   public readonly pictureName = PictureName.Cookie;
   public readonly title = ModalTitle.DeleteUser;
@@ -33,7 +32,6 @@ export class DeleteUserConfirmationModal {
 
   public onConfirmDelete(): void {
     this.confirmDelete.emit();
-    this.buttonAction.emit();
   }
 
   public onCancel(): void {

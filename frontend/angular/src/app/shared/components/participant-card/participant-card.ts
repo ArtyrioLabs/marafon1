@@ -179,17 +179,8 @@ export class ParticipantCard {
       DeleteUserConfirmationModal,
       { userName },
       {
-        buttonAction: () => {
-          this.#userService.deleteUser(userId).subscribe({
-            next: () => {
-              this.#modalService.close();
-            },
-            error: () => {
-              // Error is handled in UserService
-            },
-          });
-        },
         confirmDelete: () => {
+          // Only delete when user confirms in modal
           this.#userService.deleteUser(userId).subscribe({
             next: () => {
               this.#modalService.close();
@@ -199,7 +190,9 @@ export class ParticipantCard {
             },
           });
         },
-        closeModal: () => this.#modalService.close(),
+        closeModal: () => {
+          this.#modalService.close();
+        },
       }
     );
   }
