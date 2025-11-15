@@ -27,7 +27,6 @@
 }
 
 .button {
-  fill: color.$icon-button-bg--primary;
   display: flex;
   align-items: center;
 
@@ -35,11 +34,22 @@
     width: 24px;
     height: 24px;
     transition: all 0.3s;
+    fill: color.$icon-button-bg--primary;
+    
+    use {
+      fill: color.$icon-button-bg--primary;
+    }
   }
 
   &:hover,
   &:focus-visible {
-    fill: color.$icon-button-bg--primary-hover;
+    .button__icon {
+      fill: color.$icon-button-bg--primary-hover;
+      
+      use {
+        fill: color.$icon-button-bg--primary-hover;
+      }
+    }
   }
 
   &:focus-visible {
@@ -48,11 +58,23 @@
   }
 
   &:active {
-    fill: color.$icon-button-bg--primary-active;
+    .button__icon {
+      fill: color.$icon-button-bg--primary-active;
+      
+      use {
+        fill: color.$icon-button-bg--primary-active;
+      }
+    }
   }
 
   &:disabled {
-    fill: color.$icon-button-bg--disabled;
+    .button__icon {
+      fill: color.$icon-button-bg--disabled;
+      
+      use {
+        fill: color.$icon-button-bg--disabled;
+      }
+    }
     cursor: not-allowed;
   }
 }
