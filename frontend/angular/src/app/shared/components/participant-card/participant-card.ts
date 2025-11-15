@@ -171,7 +171,10 @@ export class ParticipantCard {
     );
   }
 
-  public onDeleteClick(): void {
+  public onDeleteClick(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    
     const userName = this.fullName();
     const userId = this.participant().id;
 
