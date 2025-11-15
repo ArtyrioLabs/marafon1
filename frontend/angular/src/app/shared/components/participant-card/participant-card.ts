@@ -179,7 +179,7 @@ export class ParticipantCard {
       DeleteUserConfirmationModal,
       { userName },
       {
-        confirmDelete: () => {
+        buttonAction: () => {
           this.#userService.deleteUser(userId).subscribe({
             next: () => {
               this.#modalService.close();
@@ -188,6 +188,9 @@ export class ParticipantCard {
               // Error is handled in UserService
             },
           });
+        },
+        cancelButtonAction: () => {
+          this.#modalService.close();
         },
         closeModal: () => this.#modalService.close(),
       }
